@@ -56,6 +56,29 @@ async function run() {
         res.send(result)
     })
 
+    // update korar kaj
+    app.put('/coffee/:id', async(req, res)=>{
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)};
+        const options = { upsert: true};
+        const updatedCoffee = req.body;
+        console.log(id)
+        const coffee ={
+            $set: {
+               name: updatedCoffee.name,
+               quantity: updatedCoffee.quantity,
+               supplier: updatedCoffee.supplier,
+               taste: updatedCoffee.taste,
+               category: updatedCoffee.category,
+               details: updatedCoffee.details,
+               photo: updatedCoffee.photo
+            }
+        }
+
+        const result = await coffeeCollection.updateOne(filter, coffee, options);
+        res.send(result);
+    })
+
     // mongodb theke delete korar kaj
     app.delete('/coffee/:id', async (req, res)=>{
         // id ta res.params.id theke niye nibo
