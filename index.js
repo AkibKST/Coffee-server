@@ -28,6 +28,7 @@ async function run() {
 
     // newCoffee ke data base e pathano
     const coffeeCollection = client.db('coffeeDB').collection('coffee');
+    const userCollection = client.db('coffeeDB').collection('user');
 
 
     // mongodb theke data cliennt side e dekhabo
@@ -88,6 +89,21 @@ async function run() {
         // mongodb crud er usecase theke ekta delete oparation chalabo
         const result = await coffeeCollection.deleteOne(query);
         res.send(result);
+    })
+
+    // user related apis
+
+    app.get('/user', async(req, res) =>{
+      const cursor = userCollection.find();
+      const users = await cursor.toArray();
+      res.send(users);
+    })
+
+    app.post('/user', async(req, res) =>{
+      const user = req.body;
+      console.log(user);
+      const result = await userCollection.insertOne(user);
+      res.send(result);
     })
 
     // Send a ping to confirm a successful connection
