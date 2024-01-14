@@ -29,6 +29,7 @@ async function run() {
     // newCoffee ke data base e pathano
     const coffeeCollection = client.db('coffeeDB').collection('coffee');
     const userCollection = client.db('coffeeDB').collection('user');
+    const userMessageCollection = client.db('coffeeDB').collection('userMessage');
 
 
     // mongodb theke data cliennt side e dekhabo
@@ -126,6 +127,14 @@ async function run() {
       res.send(result);
     })
 
+    // user Message
+
+    app.post('/userMessage', async (req, res) => {
+      const userMessage = req.body;
+      console.log(userMessage);
+      const result = await userMessageCollection.insertOne(userMessage);
+      res.send(result);
+    })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
