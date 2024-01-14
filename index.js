@@ -32,84 +32,97 @@ async function run() {
 
 
     // mongodb theke data cliennt side e dekhabo
-    app.get('/coffee', async(req, res)=>{
-        const cursor = coffeeCollection.find();
-        // coffeeCollection er modde sob gula data client side e dekhabo
+    app.get('/coffee', async (req, res) => {
+      const cursor = coffeeCollection.find();
+      // coffeeCollection er modde sob gula data client side e dekhabo
 
-        const result = await cursor.toArray();
-        res.send(result);
+      const result = await cursor.toArray();
+      res.send(result);
     })
 
     // update korar jonno
-    app.get('/coffee/:id', async(req, res)=>{
-        const id = req.params.id;
-        const query = {_id: new ObjectId(id)};
-        const result = await coffeeCollection.findOne(query);
-        res.send(result)
+    app.get('/coffee/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await coffeeCollection.findOne(query);
+      res.send(result)
     })
     // client side theke newCoffee ta nilam
-    app.post('/coffee', async(req, res)=>{
-        const newCoffee = req.body;
-        console.log(newCoffee);
+    app.post('/coffee', async (req, res) => {
+      const newCoffee = req.body;
+      console.log(newCoffee);
 
-        // client side theke j data ta asche seta cltn er moddhe dibo
-        const result = await coffeeCollection.insertOne(newCoffee);
-        res.send(result)
+      // client side theke j data ta asche seta cltn er moddhe dibo
+      const result = await coffeeCollection.insertOne(newCoffee);
+      res.send(result)
     })
 
     // update korar kaj
-    app.put('/coffee/:id', async(req, res)=>{
-        const id = req.params.id;
-        const filter = {_id: new ObjectId(id)};
-        const options = { upsert: true};
-        const updatedCoffee = req.body;
-        console.log(id)
-        const coffee ={
-            $set: {
-               name: updatedCoffee.name,
-               quantity: updatedCoffee.quantity,
-               supplier: updatedCoffee.supplier,
-               taste: updatedCoffee.taste,
-               category: updatedCoffee.category,
-               details: updatedCoffee.details,
-               photo: updatedCoffee.photo
-            }
+    app.put('/coffee/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedCoffee = req.body;
+      console.log(id)
+      const coffee = {
+        $set: {
+          name: updatedCoffee.name,
+          quantity: updatedCoffee.quantity,
+          supplier: updatedCoffee.supplier,
+          taste: updatedCoffee.taste,
+          category: updatedCoffee.category,
+          details: updatedCoffee.details,
+          photo: updatedCoffee.photo
         }
+      }
 
-        const result = await coffeeCollection.updateOne(filter, coffee, options);
-        res.send(result);
+      const result = await coffeeCollection.updateOne(filter, coffee, options);
+      res.send(result);
     })
 
     // mongodb theke delete korar kaj
-    app.delete('/coffee/:id', async (req, res)=>{
-        // id ta res.params.id theke niye nibo
-        const id = req.params.id;
-        // khujbo jeta diye delete korbo
-        const query = { _id: new ObjectId(id)};
-        // mongodb crud er usecase theke ekta delete oparation chalabo
-        const result = await coffeeCollection.deleteOne(query);
-        res.send(result);
+    app.delete('/coffee/:id', async (req, res) => {
+      // id ta res.params.id theke niye nibo
+      const id = req.params.id;
+      // khujbo jeta diye delete korbo
+      const query = { _id: new ObjectId(id) };
+      // mongodb crud er usecase theke ekta delete oparation chalabo
+      const result = await coffeeCollection.deleteOne(query);
+      res.send(result);
     })
 
     // user related apis
 
-    app.get('/user', async(req, res) =>{
+    app.get('/user', async (req, res) => {
       const cursor = userCollection.find();
       const users = await cursor.toArray();
       res.send(users);
     })
 
-    app.post('/user', async(req, res) =>{
+    app.post('/user', async (req, res) => {
       const user = req.body;
       console.log(user);
       const result = await userCollection.insertOne(user);
       res.send(result);
     })
 
-    app.delete('/user/:id', async(req, res) =>{
+    // Last logged at system
+    app.patch('/user', async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email };
+      const updateDoc = {
+        $set : {
+          lastLoggedAt: user?.lastLoggedAt
+        }
+      }
+      const result = await userCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    })
+
+    app.delete('/user/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
-      const result =await userCollection.deleteOne(query);
+      const query = { _id: new ObjectId(id) };
+      const result = await userCollection.deleteOne(query);
       res.send(result);
     })
 
@@ -124,10 +137,10 @@ async function run() {
 run().catch(console.dir);
 
 
-app.get('/', (req, res) =>{
-    res.send('Coffee making server is running')
+app.get('/', (req, res) => {
+  res.send('Coffee making server is running')
 })
 
 app.listen(port, () => {
-    console.log(`Coffee server is running on port: ${port}`)
+  console.log(`Coffee server is running on port: ${port}`)
 })
